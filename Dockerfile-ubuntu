@@ -1,0 +1,39 @@
+####################################################################################################
+#
+# 基于 Ubuntu 22.04 创建支持中文、东八区时区、X11 GUI 的基础镜像 ubuntu-x11
+# 
+####################################################################################################
+FROM ubuntu:22.04 AS ubuntu-x11
+
+# 设置中文环境变量
+ENV LANG=zh_CN.UTF-8 \
+    LANGUAGE=zh_CN:zh \
+    LC_ALL=zh_CN.UTF-8
+
+# 设置时区为东八区 (Asia/Shanghai)
+ENV TZ=Asia/Shanghai
+
+# 复制自定义字体（如 SimHei、SimSun）
+COPY ./Fonts/* /usr/share/fonts/truetype/custom/
+
+# 安装运行时依赖项
+RUN apt update && \
+    apt install -y --no-install-recommends \
+        libnss3 libgl1-mesa-glx p7zip-full libxtst6 libxt6 libx11-6 libxext6 libxrender1 \
+        libxrandr2 libasound2 libxft2 libqt5webengine5 libgtk2.0-0 libgtk-3-0 libglib2.0-0 \
+        x11-apps libdbus-1-3 openssh-server sudo \
+        locales tzdata \
+        fonts-wqy-zenhei fonts-noto-cjk fonts-arphic-uming \
+        fcitx fcitx-pinyin fcitx-frontend-qt5 && \
+    locale-gen zh_CN.UTF-8 && \
+    update-locale LANG=zh_CN.UTF-8 && \
+    ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata && \
+    echo "export QT_IM_MODULE=fcitx" >> /etc/profile && \
+    echo "export XMODIFIERS=@im=fcitx" >> /etc/profile && \
+    mkdir -p /usr/share/fonts/truetype/custom && \
+    fc-cache -f -v && \
+    rm -rf /var/lib/apt/lists/*
+
+# 默认命令
+CMD ["/bin/bash"]
