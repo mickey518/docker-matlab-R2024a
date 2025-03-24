@@ -1,5 +1,7 @@
 
-## 1. 基于 Ubuntu 22.04 创建支持中文、东八区时区、X11 GUI 创建 ubuntu:22.04-x11 镜像
+## 1. 编译 ubuntu:22.04-x11 镜像
+
+基于 Ubuntu 22.04 创建支持中文、东八区时区、X11 GUI 创建 ubuntu:22.04-x11 镜像
 
 ```bash
 docker buildx build -f Dockerfile-ubuntu -t ubuntu:22.04-x11 .
